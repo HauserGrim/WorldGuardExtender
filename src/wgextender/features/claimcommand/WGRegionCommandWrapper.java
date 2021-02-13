@@ -17,18 +17,43 @@
 
 package wgextender.features.claimcommand;
 
+import java.io.File;
+import java.util.Locale;
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.sk89q.minecraft.util.commands.CommandException;
+import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.blocks.BaseItemStack;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.extent.inventory.BlockBag;
+import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.internal.cui.CUIEvent;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.session.SessionKey;
+import com.sk89q.worldedit.util.Direction;
+import com.sk89q.worldedit.util.HandSide;
+import com.sk89q.worldedit.util.Location;
+import com.sk89q.worldedit.util.auth.AuthorizationException;
+import com.sk89q.worldedit.util.formatting.text.Component;
+import com.sk89q.worldedit.world.World;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockStateHolder;
+import com.sk89q.worldedit.world.gamemode.GameMode;
+import com.sk89q.worldedit.world.weather.WeatherType;
+import com.sk89q.worldguard.LocalPlayer;
 
 import wgextender.Config;
 import wgextender.features.claimcommand.BlockLimits.ProcessedClaimInfo;
 import wgextender.utils.CommandUtils;
 import wgextender.utils.WEUtils;
-import wgextender.utils.WGRegionUtils;
 
 @SuppressWarnings("deprecation")
 public class WGRegionCommandWrapper extends Command {
@@ -78,7 +103,8 @@ public class WGRegionCommandWrapper extends Command {
 			try {
 				WEClaimCommand.claim(regionname, sender);
 				if (!hasRegion && config.claimAutoFlagsEnabled) {
-					AutoFlags.setFlagsForRegion(WGRegionUtils.wrapPlayer(player), player.getWorld(), config, regionname);
+				    final FakeConsoleComandSender fakePlayerSender = new FakeConsoleComandSender(player);
+                                    AutoFlags.setFlagsForRegion((Actor) fakePlayerSender, player.getWorld(), config, regionname);
 				}
 			} catch (CommandException ex) {
 				sender.sendMessage(ChatColor.RED + ex.getMessage());
@@ -88,5 +114,290 @@ public class WGRegionCommandWrapper extends Command {
 			return originalcommand.execute(sender, label, args);
 		}
 	}
-
+        private static class FakeConsoleComandSender implements LocalPlayer {
+            private Player player;
+            
+            private FakeConsoleComandSender(final Player player) {
+                    this.player = player;
+            }
+            @Override
+            public boolean ascendLevel() {
+                    return false;
+            }
+            @Override
+            public boolean ascendToCeiling(final int arg0) {
+                    return false;
+            }
+            @Override
+            public boolean ascendToCeiling(final int arg0, final boolean arg1) {
+                    return false;
+            }
+            @Override
+            public boolean ascendUpwards(final int arg0) {
+                    return false;
+            }
+            @Override
+            public boolean ascendUpwards(final int arg0, final boolean arg1) {
+                    return false;
+            }
+            @Override
+            public boolean descendLevel() {
+                    return false;
+            }
+            @Override
+            public void findFreePosition() {
+            }
+            @Override
+            public void findFreePosition(final Location arg0) {
+            }
+            @Override
+            public void floatAt(final int arg0, final int arg1, final int arg2, final boolean arg3) {
+            }
+            @Override
+            public BaseBlock getBlockInHand(final HandSide arg0) throws WorldEditException {
+                    return null;
+            }
+            @Override
+            public Location getBlockOn() {
+                    return null;
+            }
+            @Override
+            public Location getBlockTrace(final int arg0) {
+                    return null;
+            }
+            @Override
+            public Location getBlockTrace(final int arg0, final boolean arg1) {
+                    return null;
+            }
+            @Override
+            public Location getBlockTrace(final int arg0, final boolean arg1, final Mask arg2) {
+                    return null;
+            }
+            @Override
+            public Location getBlockTraceFace(final int arg0, final boolean arg1) {
+                    return null;
+            }
+            @Override
+            public Location getBlockTraceFace(final int arg0, final boolean arg1, final Mask arg2) {
+                    return null;
+            }
+            @Override
+            public Direction getCardinalDirection() {
+                    return null;
+            }
+            @Override
+            public Direction getCardinalDirection(final int arg0) {
+                    return null;
+            }
+            @Override
+            public GameMode getGameMode() {
+                    return null;
+            }
+            @Override
+            public BlockBag getInventoryBlockBag() {
+                    return null;
+            }
+            @Override
+            public BaseItemStack getItemInHand(final HandSide arg0) {
+                    return null;
+            }
+            @Override
+            public Location getSolidBlockTrace(final int arg0) {
+                    return null;
+            }
+            @Override
+            public World getWorld() {
+                    return BukkitAdapter.adapt(this.player.getWorld());
+            }
+            @Override
+            public void giveItem(final BaseItemStack arg0) {
+            }
+            @Override
+            public boolean isHoldingPickAxe() {
+                    return false;
+            }
+            @Override
+            public boolean passThroughForwardWall(final int arg0) {
+                    return false;
+            }
+            @Override
+            public <B extends BlockStateHolder<B>> void sendFakeBlock(final BlockVector3 arg0, final B arg1) {
+            }
+            @Override
+            public void setGameMode(final GameMode arg0) {
+            }
+            @Override
+            public void setOnGround(final Location arg0) {
+            }
+            @Override
+            public BaseEntity getState() {
+                    return null;
+            }
+            @Override
+            public boolean remove() {
+                    return false;
+            }
+            @Override
+            public <T> T getFacet(final Class<? extends T> arg0) {
+                    return null;
+            }
+            @Override
+            public Extent getExtent() {
+                    return null;
+            }
+            @Override
+            public Location getLocation() {
+                    return BukkitAdapter.adapt(this.player.getLocation());
+            }
+            @Override
+            public boolean setLocation(final Location arg0) {
+                    return false;
+            }
+            @Override
+            public boolean canDestroyBedrock() {
+                    return false;
+            }
+            @Override
+            public void dispatchCUIEvent(final CUIEvent arg0) {
+            }
+            @Override
+            public Locale getLocale() {
+                    return null;
+            }
+            @Override
+            public String getName() {
+                    return this.player.getName();
+            }
+            @Override
+            public boolean isPlayer() {
+                    return false;
+            }
+            @Override
+            public File openFileOpenDialog(final String[] arg0) {
+                    return null;
+            }
+            @Override
+            public File openFileSaveDialog(final String[] arg0) {
+                    return null;
+            }
+            @Override
+            public void print(final String arg0) {
+            }
+            @Override
+            public void print(final Component arg0) {
+            }
+            @Override
+            public void printDebug(final String arg0) {
+            }
+            @Override
+            public void printError(final String arg0) {
+            }
+            @Override
+            public void printRaw(final String arg0) {
+            }
+            @Override
+            public UUID getUniqueId() {
+                    return this.player.getUniqueId();
+            }
+            @Override
+            public SessionKey getSessionKey() {
+                    return null;
+            }
+            @Override
+            public void checkPermission(final String arg0) throws AuthorizationException {
+            }
+            @Override
+            public String[] getGroups() {
+                    return null;
+            }
+            @Override
+            public boolean hasPermission(final String arg0) {
+                    return true;
+            }
+            @Override
+            public void ban(final String arg0) {
+            }
+            @Override
+            public float getExhaustion() {
+                    return 0.0f;
+            }
+            @Override
+            public int getFireTicks() {
+                    return 0;
+            }
+            @Override
+            public double getFoodLevel() {
+                    return 0.0;
+            }
+            @Override
+            public double getHealth() {
+                    return 0.0;
+            }
+            @Override
+            public double getMaxHealth() {
+                    return 0.0;
+            }
+            @Override
+            public long getPlayerTimeOffset() {
+                    return 0L;
+            }
+            @Override
+            public WeatherType getPlayerWeather() {
+                    return null;
+            }
+            @Override
+            public double getSaturation() {
+                    return 0.0;
+            }
+            @Override
+            public boolean hasGroup(final String arg0) {
+                    return false;
+            }
+            @Override
+            public boolean isPlayerTimeRelative() {
+                    return true;
+            }
+            @Override
+            public void kick(final String arg0) {
+            }
+            @Override
+            public void resetFallDistance() {
+            }
+            @Override
+            public void resetPlayerTime() {
+            }
+            
+            public void resetPlayerWeather() {
+            }
+            @Override
+            public void sendTitle(final String arg0, final String arg1) {
+            }
+            @Override
+            public void setCompassTarget(final Location arg0) {
+            }
+            @Override
+            public void setExhaustion(final float arg0) {
+            }
+            @Override
+            public void setFireTicks(final int arg0) {
+            }
+            @Override
+            public void setFoodLevel(final double arg0) {
+            }
+            @Override
+            public void setHealth(final double arg0) {
+            }
+            @Override
+            public void setPlayerTime(final long arg0, final boolean arg1) {
+            }
+            @Override
+            public void setPlayerWeather(final WeatherType arg0) {
+            }
+            @Override
+            public void setSaturation(final double arg0) {
+            }
+            @Override
+            public void teleport(final Location arg0, final String arg1, final String arg2) {
+            }
+    }
 }
