@@ -104,7 +104,7 @@ public class WGRegionCommandWrapper extends Command {
 				WEClaimCommand.claim(regionname, sender);
 				if (!hasRegion && config.claimAutoFlagsEnabled) {
 				    final FakeConsoleComandSender fakePlayerSender = new FakeConsoleComandSender(player);
-                                    AutoFlags.setFlagsForRegion((Actor) fakePlayerSender, player.getWorld(), config, regionname);
+                                    AutoFlags.setFlagsForRegion(fakePlayerSender, player.getWorld(), config, regionname);
 				}
 			} catch (CommandException ex) {
 				sender.sendMessage(ChatColor.RED + ex.getMessage());
@@ -114,7 +114,7 @@ public class WGRegionCommandWrapper extends Command {
 			return originalcommand.execute(sender, label, args);
 		}
 	}
-        private static class FakeConsoleComandSender implements LocalPlayer {
+        private static class FakeConsoleComandSender implements LocalPlayer, Actor {
             private Player player;
             
             private FakeConsoleComandSender(final Player player) {
@@ -207,7 +207,7 @@ public class WGRegionCommandWrapper extends Command {
             }
             @Override
             public World getWorld() {
-                    return BukkitAdapter.adapt(this.player.getWorld());
+                    return BukkitAdapter.adapt(player.getWorld());
             }
             @Override
             public void giveItem(final BaseItemStack arg0) {
@@ -247,7 +247,7 @@ public class WGRegionCommandWrapper extends Command {
             }
             @Override
             public Location getLocation() {
-                    return BukkitAdapter.adapt(this.player.getLocation());
+                    return BukkitAdapter.adapt(player.getLocation());
             }
             @Override
             public boolean setLocation(final Location arg0) {
@@ -266,7 +266,7 @@ public class WGRegionCommandWrapper extends Command {
             }
             @Override
             public String getName() {
-                    return this.player.getName();
+                    return player.getName();
             }
             @Override
             public boolean isPlayer() {
@@ -297,7 +297,7 @@ public class WGRegionCommandWrapper extends Command {
             }
             @Override
             public UUID getUniqueId() {
-                    return this.player.getUniqueId();
+                    return player.getUniqueId();
             }
             @Override
             public SessionKey getSessionKey() {
@@ -366,7 +366,7 @@ public class WGRegionCommandWrapper extends Command {
             @Override
             public void resetPlayerTime() {
             }
-            
+            @Override
             public void resetPlayerWeather() {
             }
             @Override
