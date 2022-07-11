@@ -46,6 +46,8 @@ public class Config {
 
 	public boolean claimBlockLimitsEnabled = false;
 	public Map<String, Integer> claimBlockLimins = new LinkedHashMap<>();
+	public int claimMinSize = 0;
+	public int claimMinWidth = 0;
 
 	public boolean checkLavaFlow = false;
 	public boolean checkWaterFlow = false;
@@ -63,12 +65,6 @@ public class Config {
 	public Set<String> restrictedCommandsInRegion = new HashSet<>();
 
 	public boolean extendedWorldEditWandEnabled = false;
-
-	public Boolean miscDefaultPvPFlagOperationMode = null;
-
-	protected static final String miscPvPFlagOperationModeAllow = "allow";
-	protected static final String miscPvPFlagOperationModeDeny = "deny";
-	protected static final String miscPvPFlagOperationModeDefault = "default";
 
 	public void loadConfig() {
 		loadcfg();
@@ -88,6 +84,9 @@ public class Config {
 				claimBlockLimins.put(group.toLowerCase(), blimitscs.getInt(group));
 			}
 		}
+
+		claimMinSize = config.getInt("claim.minsize", claimMinSize);
+		claimMinWidth = config.getInt("claim.minwidth", claimMinWidth);
 
 		checkLavaFlow = config.getBoolean("regionprotect.flow.lava", checkLavaFlow);
 		checkWaterFlow = config.getBoolean("regionprotect.flow.water", checkWaterFlow);
@@ -114,15 +113,6 @@ public class Config {
 		restrictedCommandsInRegion = new HashSet<>(config.getStringList("restrictcommands.commands"));
 
 		extendedWorldEditWandEnabled = config.getBoolean("extendedwewand", extendedWorldEditWandEnabled);
-
-		String miscPvpModeStr = config.getString("misc.pvpmode", miscPvPFlagOperationModeDefault);
-		if (miscPvpModeStr.equalsIgnoreCase(miscPvPFlagOperationModeAllow)) {
-			miscDefaultPvPFlagOperationMode = Boolean.TRUE;
-		} else if (miscPvpModeStr.equalsIgnoreCase(miscPvPFlagOperationModeDeny)) {
-			miscDefaultPvPFlagOperationMode = Boolean.FALSE;
-		} else {
-			miscDefaultPvPFlagOperationMode = null;
-		}
 	}
 
 	private void savecfg() {
@@ -137,6 +127,9 @@ public class Config {
 		for (Entry<String, Integer> entry : claimBlockLimins.entrySet()) {
 			config.set("claim.blocklimits.limits." + entry.getKey(), entry.getValue());
 		}
+
+		config.set("claim.minsize", claimMinSize);
+		config.set("claim.minwidth", claimMinWidth);
 
 		config.set("regionprotect.flow.lava", checkLavaFlow);
 		config.set("regionprotect.flow.water", checkWaterFlow);
@@ -159,8 +152,6 @@ public class Config {
 		config.set("restrictcommands.commands", new ArrayList<>(restrictedCommandsInRegion));
 
 		config.set("extendedwewand", extendedWorldEditWandEnabled);
-
-		config.set("misc.pvpmode", miscDefaultPvPFlagOperationMode != null ? miscDefaultPvPFlagOperationMode ? miscPvPFlagOperationModeAllow : miscPvPFlagOperationModeDeny : miscPvPFlagOperationModeDefault);
 
 		try {config.save(configfile);} catch (IOException e) {}
 	}

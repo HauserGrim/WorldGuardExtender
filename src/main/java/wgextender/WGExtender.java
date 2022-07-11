@@ -24,16 +24,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import wgextender.commands.Commands;
 import wgextender.features.claimcommand.WGRegionCommandWrapper;
-import wgextender.features.custom.OldPVPFlagsHandler;
 import wgextender.features.extendedwand.WEWandCommandWrapper;
 import wgextender.features.extendedwand.WEWandListener;
 import wgextender.features.flags.ChorusFruitUseFlag;
 import wgextender.features.flags.FlagRegistration;
-import wgextender.features.flags.OldPVPAttackSpeedFlag;
-import wgextender.features.flags.OldPVPNoBowFlag;
-import wgextender.features.flags.OldPVPNoShieldBlockFlag;
 import wgextender.features.regionprotect.ownormembased.ChorusFruitFlagHandler;
-import wgextender.features.regionprotect.ownormembased.PvPHandlingListener;
 import wgextender.features.regionprotect.ownormembased.RestrictCommands;
 import wgextender.features.regionprotect.regionbased.BlockBurn;
 import wgextender.features.regionprotect.regionbased.Explode;
@@ -51,16 +46,10 @@ public class WGExtender extends JavaPlugin {
 		instance = this;
 	}
 
-	private PvPHandlingListener pvplistener;
-	private OldPVPFlagsHandler oldpvphandler;
-
 	@Override
 	public void onEnable() {
 		VaultIntegration.getInstance().hook();
 		ChorusFruitUseFlag.assignInstance();
-		OldPVPAttackSpeedFlag.assignInstance();
-		OldPVPNoShieldBlockFlag.assignInstance();
-		OldPVPNoBowFlag.assignInstance();
 		Config config = new Config(this);
 		config.loadConfig();
 		getCommand("wgex").setExecutor(new Commands(config));
@@ -75,13 +64,6 @@ public class WGExtender extends JavaPlugin {
 			WGRegionCommandWrapper.inject(config);
 			WEWandCommandWrapper.inject(config);
 			FlagRegistration.registerFlag(ChorusFruitUseFlag.getInstance());
-			FlagRegistration.registerFlag(OldPVPAttackSpeedFlag.getInstance());
-			FlagRegistration.registerFlag(OldPVPNoShieldBlockFlag.getInstance());
-			FlagRegistration.registerFlag(OldPVPNoBowFlag.getInstance());
-			pvplistener = new PvPHandlingListener(config);
-			pvplistener.inject();
-			oldpvphandler = new OldPVPFlagsHandler();
-			oldpvphandler.start();
 		} catch (Throwable t) {
 			getLogger().log(Level.SEVERE, "Unable to inject, shutting down", t);
 			t.printStackTrace();
@@ -94,8 +76,6 @@ public class WGExtender extends JavaPlugin {
 		try {
 			WEWandCommandWrapper.uninject();
 			WGRegionCommandWrapper.uninject();
-			pvplistener.uninject();
-			oldpvphandler.stop();
 		} catch (Throwable t) {
 			getLogger().log(Level.SEVERE, "Unable to uninject, shutting down", t);
 			Bukkit.shutdown();
