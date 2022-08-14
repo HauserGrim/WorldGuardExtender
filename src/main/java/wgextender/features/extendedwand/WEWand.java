@@ -27,7 +27,7 @@ import wgextender.utils.WEUtils;
 
 public class WEWand {
 
-	protected static final String WAND_NAME = ChatColor.LIGHT_PURPLE + "Selection wand";
+	protected static final String WAND_NAME = ChatColor.LIGHT_PURPLE + "Инструмент выделения";
 
 	protected static Material cachedWandMaterial;
 
