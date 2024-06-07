@@ -25,6 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import wgextender.Config;
 import wgextender.utils.CommandUtils;
 import wgextender.utils.WEUtils;
@@ -56,7 +57,7 @@ public class WGRegionCommandWrapper extends Command {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
 		if ((sender instanceof Player player) && (args.length >= 2) && args[0].equalsIgnoreCase("claim")) {
 			String regionname = args[1];
 			if (config.claimExpandSelectionVertical) {
@@ -88,7 +89,6 @@ public class WGRegionCommandWrapper extends Command {
 				if (minwidth > 0) {
 					BigInteger width = info.getMinWidthSize();
 					if (width.compareTo(BigInteger.valueOf(minwidth)) < 0) {
-						player.sendMessage( "Вы не можете создать такой узкий регион.");
 						player.sendMessage(ChatColor.RED + "Вы не можете создать такой узкий регион.");
 						player.sendMessage(ChatColor.RED + "Миниммальная ширина: " + minwidth + ", Ваша ширина: " + width);
 						return true;

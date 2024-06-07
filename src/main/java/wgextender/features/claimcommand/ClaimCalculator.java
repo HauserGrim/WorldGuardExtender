@@ -14,17 +14,17 @@ public class ClaimCalculator {
 
     public ClaimInfo getClaimInfo(Config config, Player player) {
         ClaimInfo info = new ClaimInfo();
-        Region psel;
+        Region selection;
         try {
-            psel = WEUtils.getSelection(player);
+            selection = WEUtils.getSelection(player);
         } catch (IncompleteRegionException e) {
             return info;
         }
-        BlockVector3 min = psel.getMinimumPoint();
-        BlockVector3 max = psel.getMaximumPoint();
-        BigInteger xWidth = BigInteger.valueOf(max.getBlockX()).subtract(BigInteger.valueOf(min.getBlockX())).add(BigInteger.ONE);
-        BigInteger zWidth = BigInteger.valueOf(max.getBlockZ()).subtract(BigInteger.valueOf(min.getBlockZ())).add(BigInteger.ONE);
-        BigInteger yWidth = BigInteger.valueOf(max.getBlockY()).subtract(BigInteger.valueOf(min.getBlockY())).add(BigInteger.ONE);
+        BlockVector3 min = selection.getMinimumPoint();
+        BlockVector3 max = selection.getMaximumPoint();
+        BigInteger xWidth = distance(min.getBlockX(), max.getBlockX());
+        BigInteger zWidth = distance(min.getBlockZ(), max.getBlockZ());
+        BigInteger yWidth = distance(min.getBlockY(), max.getBlockY());
         BigInteger size = xWidth.multiply(zWidth).multiply(yWidth);
         BigInteger minw = xWidth.min(zWidth).min(yWidth);
         String[] pgroups = VaultIntegration.getInstance().getPermissions().getPlayerGroups(player);
@@ -41,7 +41,11 @@ public class ClaimCalculator {
         return info;
     }
 
-    protected class ClaimInfo {
+    private BigInteger distance(long min, long max) {
+        return BigInteger.valueOf(max - min + 1L);
+    }
+
+    protected static class ClaimInfo {
         private BigInteger size;
         private BigInteger maxsize;
         private BigInteger minwidthsize;

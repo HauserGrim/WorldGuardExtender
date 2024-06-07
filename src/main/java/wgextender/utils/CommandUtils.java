@@ -17,17 +17,15 @@
 
 package wgextender.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import wgextender.WGExtender;
 
 public class CommandUtils {
 
@@ -58,12 +56,15 @@ public class CommandUtils {
 	}
 
 	public static void replaceComamnd(Command oldcommand, Command newcommand) throws IllegalAccessException {
-		Iterator<Entry<String, Command>> iterator = getCommands().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Command> entry = iterator.next();
+		Set <Entry<String,Command>> toReplace = new HashSet<>();
+		for (Entry<String, Command> entry : getCommands().entrySet()) {
 			if (entry.getValue() == oldcommand) {
-				entry.setValue(newcommand);
+				// От ConcurrentModificationException на  1.20.6
+				toReplace.add(entry);
 			}
+		}
+		for (Entry<String,Command> entry : toReplace) {
+			entry.setValue(newcommand);
 		}
 	}
 
